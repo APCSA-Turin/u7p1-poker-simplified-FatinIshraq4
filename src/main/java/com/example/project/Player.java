@@ -51,8 +51,8 @@ public class Player{
 
         int consecutive = 1; // Track consecutive cards
         for (int i = 0; i < allCards.size() - 1; i++) {
-            int currentRank = getRankValue(allCards.get(i).getRank());
-            int nextRank = getRankValue(allCards.get(i + 1).getRank());
+            int currentRank = Utility.getRankValue(allCards.get(i).getRank());
+            int nextRank = Utility.getRankValue(allCards.get(i + 1).getRank());
             if (nextRank == currentRank + 1) { 
                 consecutive++; // Found consecutive rank
             } else if (nextRank != currentRank) { 
@@ -121,21 +121,6 @@ public class Player{
     }
 
 
-    // Helper method to convert a card's rank string to an int value.
-    private int getRankValue(String rank) {
-        if (rank.equals("A")) {
-            return 14; // Ace is high
-        } else if (rank.equals("K")) {
-            return 13;
-        } else if (rank.equals("Q")) {
-            return 12;
-        } else if (rank.equals("J")) {
-            return 11;
-        } else {
-            // For numeric ranks like "2", "3", ..., "10"
-            return Integer.parseInt(rank);
-        }
-    }
 
 
 public void sortAllCards() {
@@ -144,9 +129,9 @@ public void sortAllCards() {
     }
     for (int i = 1; i < allCards.size(); i++) {
         Card cur = allCards.get(i);
-        int curValue = getRankValue(cur.getRank());
+        int curValue = Utility.getRankValue(cur.getRank());
         int j = i;
-        while (j > 0 && curValue < getRankValue(allCards.get(j - 1).getRank())) {
+        while (j > 0 && curValue < Utility.getRankValue(allCards.get(j - 1).getRank())) {
             allCards.set(j, allCards.get(j - 1));
             j--;
         }
@@ -159,7 +144,7 @@ public void sortAllCards() {
         for (int i=0; i<ranks.length; i++) { //go throught all the ranks
             int count=0;
             for (Card c : allCards) { //check every card 
-                if (getRankValue(c.getRank())==getRankValue(ranks[i])) {count++;} //add to count if the card has the same rank as the current iteration of ranks
+                if (Utility.getRankValue(c.getRank())==Utility.getRankValue(ranks[i])) {count++;} //add to count if the card has the same rank as the current iteration of ranks
             }
             rankingFrequency.add(count); //add the count to the new arrayList
         }
