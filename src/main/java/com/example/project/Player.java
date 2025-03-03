@@ -9,7 +9,7 @@ public class Player{
     
     public Player(){
         hand = new ArrayList<>();
-        allCards = new ArrayList<>();
+        allCards = new ArrayList<>(); //initialize allCards
     }
 
     public ArrayList<Card> getHand(){return hand;}
@@ -19,6 +19,7 @@ public class Player{
         hand.add(c); //adds a new card to hand
     }
 
+
     public boolean checkFlush() {
         ArrayList<Integer> checker = findSuitFrequency();
         for (int i : checker) { //Check for flush if every card is the same rank
@@ -27,34 +28,45 @@ public class Player{
         return false; //return false if condition is not met
     }
 
+
     public int checkNumberOfPair() {
-        ArrayList<Integer> checker = findRankingFrequency();
-        int num=0;
-        for (int i : checker) {
+        int num=0; //num represents the number of pairs
+        for (int i : findRankingFrequency()) {
             if (i==2) {num++;} //Add to num if there is two cards of same rank
         }
         return num;
     }
 
+
     public boolean checkThreeOfAKind() {
-        ArrayList<Integer> checker = findRankingFrequency();
-        for (int i : checker) {
+        for (int i : findRankingFrequency()) {
             if (i==3) {return true;} //Checking if there are any ranks with 3 cards
+        } //early return true if three of a kind is found
+        return false; //return false if condition is not met
+    }
+
+
+    public boolean checkStraight() {
+        sortAllCards(); //Make sure the cards are sorted
+
+        int consecutive = 1; // Track consecutive cards
+        for (int i = 0; i < allCards.size() - 1; i++) {
+            int currentRank = getRankValue(allCards.get(i).getRank());
+            int nextRank = getRankValue(allCards.get(i + 1).getRank());
+            if (nextRank == currentRank + 1) { 
+                consecutive++; // Found consecutive rank
+            } else if (nextRank != currentRank) { 
+                consecutive = 1; // Reset if not consecutive (ignoring duplicates)
+            }
+            if (consecutive == 5) { // A straight needs at least 5 consecutive cards
+                return true; //Early return true if straight
+            }
         }
         return false;
     }
-
-    public boolean checkStraight() {
-        sortAllCards();
-        for (int i=0; i<allCards.size()-1; i++) {
-            if (getRankValue(allCards.get(i+1).getRank()) < getRankValue(allCards.get(i).getRank())) {return false;} //If consecutive card is less than previous early return false
-        }
-        return true;
-    }
-
+    
     public boolean checkFourKind() {
-        ArrayList<Integer> checker = findRankingFrequency();
-        for (int i : checker) {
+        for (int i : findRankingFrequency()) {
             if (i==4) {return true;} //Checking if there are any ranks with 4 cards
         }
         return false;
@@ -68,12 +80,12 @@ public class Player{
         return false;
     }
 
-    public String playHand(ArrayList<Card> communityCards){ 
+    public String playHand(ArrayList<Card> communityCards){
+        //Set up allCards by combining hand and community cards
         allCards.clear();
         allCards.addAll(hand);
         allCards.addAll(communityCards);
         sortAllCards();
-
 
         //set variables used to check if the conditions of the hands are met
         boolean flush = checkFlush();
@@ -102,9 +114,12 @@ public class Player{
             return "Two Pair";
         } else if(numPairs==1) {
             return "A Pair";
-        } 
+        } else if (hand.contains(allCards.get(allCards.size()-1))) { //Since allCards is sorted the high card will be the last one; this checks if hand contains that card
+            return "High Card";
+        }
         return "Nothing";
     }
+
 
     // Helper method to convert a card's rank string to an int value.
     private int getRankValue(String rank) {
@@ -153,7 +168,7 @@ public void sortAllCards() {
 
     public ArrayList<Integer> findSuitFrequency(){
         ArrayList<Integer> suitFrequency = new ArrayList<Integer>(); //make a new arrayList
-        for (int i=0; i<suits.length; i++) { //go throught all the suits
+        for (int i=0; i<suits.length; i++) { //go through all the suits
             int count=0;
             for (Card c : allCards) { //check every card 
                 if (c.getSuit().equals(suits[i])) {count++;} //add to count if the card has the same suit as the current iteration of suits
