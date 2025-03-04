@@ -80,6 +80,15 @@ public class Player{
         return false;
     }
 
+    public boolean checkHighCard() { //Replacement for .contains
+        sortAllCards();
+        Card high = allCards.get(allCards.size()-1); //Finds the high card among all the cards
+        for (Card c : hand) { //Iterates through hand
+            if (c==high) {return true;} //If hand has the high card it early returns true
+        }
+        return false; 
+    }
+
     public String playHand(ArrayList<Card> communityCards){
         //Set up allCards by combining hand and community cards
         allCards.clear();
@@ -94,6 +103,7 @@ public class Player{
         boolean straight = checkStraight();
         boolean checkFour = checkFourKind();
         boolean royal = checkRoyal();
+        boolean highCard = checkHighCard();
 
         //Start from the best hand and go down until the conditions match
         if (royal==true && flush==true) {
@@ -114,7 +124,7 @@ public class Player{
             return "Two Pair";
         } else if(numPairs==1) {
             return "A Pair";
-        } else if (hand.contains(allCards.get(allCards.size()-1))) { //Since allCards is sorted the high card will be the last one; this checks if hand contains that card
+        } else if (highCard==true) { //Since allCards is sorted the high card will be the last one; this checks if hand contains that card
             return "High Card";
         }
         return "Nothing";
